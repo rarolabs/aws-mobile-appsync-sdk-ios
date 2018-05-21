@@ -449,13 +449,15 @@ public class AWSAppSyncClient: NetworkConnectionNotification {
     private func checkAndFetchS3Object(variables:GraphQLMap?) -> (bucket: String, key: String, region: String, contentType: String, localUri: String)? {
         if let variables = variables {
             for key in variables.keys {
-                if let object = variables[key].jsonValue as? Dictionary<String, String> {
-                    guard let bucket = object["bucket"] else { return nil }
-                    guard let key = object["key"] else { return nil }
-                    guard let region = object["region"] else { return nil }
-                    guard let contentType = object["mimeType"] else { return nil }
-                    guard let localUri = object["localUri"] else { return nil }
-                    return (bucket, key, region, contentType, localUri)
+                if let upperObject = variables[key].jsonValue as? Dictionary<String,Any> {
+                    if let object = upperObject["file"] as? Dictionary<String,String> {
+                        guard let bucket = object["bucket"] else { return nil }
+                        guard let key = object["key"] else { return nil }
+                        guard let region = object["region"] else { return nil }
+                        guard let contentType = object["mimeType"] else { return nil }
+                        guard let localUri = object["localUri"] else { return nil }
+                        return (bucket, key, region, contentType, localUri)
+                    }
                 }
             }
         }
